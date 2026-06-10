@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1177678B-7BC0-4328-B149-DC0E5B07CA5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhalletRoute.Domain", "src\WhalletRoute.Domain\WhalletRoute.Domain.csproj", "{C27353C9-BAE7-47BD-AE13-65B1F482C9B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhalletRoute.Application", "src\WhalletRoute.Application\WhalletRoute.Application.csproj", "{71A88310-B4FC-4353-AB52-FC6D9ED62ED2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhalletRoute.Infrastructure", "src\WhalletRoute.Infrastructure\WhalletRoute.Infrastructure.csproj", "{7229C4EB-A28C-477F-8543-3594D896A504}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhalletRoute.Api", "src\WhalletRoute.Api\WhalletRoute.Api.csproj", "{AD28A576-C8FA-4614-BB6A-5672A62776D7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C27353C9-BAE7-47BD-AE13-65B1F482C9B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C27353C9-BAE7-47BD-AE13-65B1F482C9B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C27353C9-BAE7-47BD-AE13-65B1F482C9B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C27353C9-BAE7-47BD-AE13-65B1F482C9B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71A88310-B4FC-4353-AB52-FC6D9ED62ED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71A88310-B4FC-4353-AB52-FC6D9ED62ED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71A88310-B4FC-4353-AB52-FC6D9ED62ED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71A88310-B4FC-4353-AB52-FC6D9ED62ED2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7229C4EB-A28C-477F-8543-3594D896A504}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7229C4EB-A28C-477F-8543-3594D896A504}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7229C4EB-A28C-477F-8543-3594D896A504}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7229C4EB-A28C-477F-8543-3594D896A504}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD28A576-C8FA-4614-BB6A-5672A62776D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD28A576-C8FA-4614-BB6A-5672A62776D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD28A576-C8FA-4614-BB6A-5672A62776D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD28A576-C8FA-4614-BB6A-5672A62776D7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C27353C9-BAE7-47BD-AE13-65B1F482C9B0} = {1177678B-7BC0-4328-B149-DC0E5B07CA5B}
+		{71A88310-B4FC-4353-AB52-FC6D9ED62ED2} = {1177678B-7BC0-4328-B149-DC0E5B07CA5B}
+		{7229C4EB-A28C-477F-8543-3594D896A504} = {1177678B-7BC0-4328-B149-DC0E5B07CA5B}
+		{AD28A576-C8FA-4614-BB6A-5672A62776D7} = {1177678B-7BC0-4328-B149-DC0E5B07CA5B}
+	EndGlobalSection
+EndGlobal

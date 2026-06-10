@@ -1,0 +1,6 @@
+@WhalletRoute.Api_HostAddress = http://localhost:5036
+
+GET {{WhalletRoute.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
