@@ -1,5 +1,6 @@
 namespace WhalletRoute.Domain.Routing;
 
+// Stop after being ordered
 public sealed record OrderedStop
 {
     public required string StopId { get; init; }

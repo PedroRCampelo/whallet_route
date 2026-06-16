@@ -1,5 +1,6 @@
 namespace WhalletRoute.Application.Routing.Contracts;
 
+// Stops that arrive from Json
 public sealed record StopRequest
 {
     public required string Id { get; init; }

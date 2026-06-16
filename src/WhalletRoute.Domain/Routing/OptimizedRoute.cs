@@ -1,5 +1,6 @@
 namespace WhalletRoute.Domain.Routing;
 
+// Complete route
 public sealed record OptimizedRoute
 {
     public required double TotalDistanceMeters { get; init; }

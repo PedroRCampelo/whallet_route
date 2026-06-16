@@ -2,10 +2,11 @@ using WhalletRoute.Domain.Geo;
 
 namespace WhalletRoute.Domain.Routing;
 
+// Stops
 public sealed class Stop
 {
     public string Id { get; }
-    public Coordinate Coordinate { get; }
+    public Coordinate Coordinate { get; } // 
 
     public Stop(string id, Coordinate coordinate)
     {
