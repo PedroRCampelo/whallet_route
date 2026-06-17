@@ -1,3 +1,4 @@
+using WhalletRoute.Application.Geocoding;
 using WhalletRoute.Application.Routing.Contracts;
 using WhalletRoute.Domain.Geo;
 using WhalletRoute.Domain.Routing;
@@ -7,16 +8,21 @@ namespace WhalletRoute.Application.Routing;
 public sealed class RouteOptimizationService
 {
     private readonly IRouteSolver _solver;
+    private readonly IGeocoder _geocoder;
 
-    public RouteOptimizationService(IRouteSolver solver)
+    public RouteOptimizationService(IRouteSolver solver, IGeocoder geocoder)
     {
         _solver = solver;
+        _geocoder = geocoder;
     }
 
-    public OptimizeRouteResponse Optimize(OptimizeRouteRequest request)
+    public async Task<OptimizeRouteResponse> OptimizeAsync(OptimizeRouteRequest request, CancellationToken cancellationToken)
     {
-        var origin = ToStop(request.Origin);
-        var stops = request.Stops.Select(ToStop).ToList();
+        var origin = await ToStopAsync(request.Origin, cancellationToken);
+
+        var stops = new List<Stop>();
+        foreach (var stopRequest in request.Stops)
+            stops.Add(await ToStopAsync(stopRequest, cancellationToken));
 
         if (stops.Count == 0)
             throw new ArgumentException("At least one stop is required.");
@@ -39,13 +45,20 @@ public sealed class RouteOptimizationService
         };
     }
 
-    private static Stop ToStop(StopRequest request)
+    private async Task<Stop> ToStopAsync(StopRequest request, CancellationToken cancellationToken)
     {
-        if (request.Latitude is null || request.Longitude is null)
-            throw new ArgumentException(
-                $"Stop '{request.Id}' must include latitude and longitude. Address geocoding is not supported yet.");
+        if (request.Latitude is not null && request.Longitude is not null)
+        {
+            var explicitCoordinate = new Coordinate(request.Latitude.Value, request.Longitude.Value);
+            return new Stop(request.Id, explicitCoordinate);
+        }
 
-        var coordinate = new Coordinate(request.Latitude.Value, request.Longitude.Value);
-        return new Stop(request.Id, coordinate);
+        if (!string.IsNullOrWhiteSpace(request.Address))
+        {
+            var geocoded = await _geocoder.GeocodeAsync(request.Address, cancellationToken);
+            return new Stop(request.Id, geocoded);
+        }
+
+        throw new ArgumentException($"Stop '{request.Id}' must include either coordinates or an address.");
     }
 }

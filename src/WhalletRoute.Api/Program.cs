@@ -1,5 +1,7 @@
+using WhalletRoute.Application.Geocoding;
 using WhalletRoute.Application.Routing;
 using WhalletRoute.Application.Routing.Contracts;
+using WhalletRoute.Infrastructure.Geocoding;
 using WhalletRoute.Infrastructure.Routing;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,21 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IRouteSolver, OrToolsRouteSolver>();
+builder.Services.AddSingleton<IGeocodeCache, InMemoryGeocodeCache>();
+
+var googleApiKey = builder.Configuration["Google:GeocodingApiKey"]
+                   ?? throw new InvalidOperationException("Missing configuration 'Google:GeocodingApiKey'.");
+
+builder.Services.AddHttpClient<IGeocoder, GoogleGeocoder>()
+    .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(10));
+
+builder.Services.AddScoped<IGeocoder>(sp =>
+{
+    var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient(nameof(GoogleGeocoder));
+    var cache = sp.GetRequiredService<IGeocodeCache>();
+    return new GoogleGeocoder(httpClient, cache, googleApiKey);
+});
+
 builder.Services.AddScoped<RouteOptimizationService>();
 
 var app = builder.Build();
@@ -20,14 +37,18 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
-app.MapPost("/v1/routes/optimize", (OptimizeRouteRequest request, RouteOptimizationService service) =>
+app.MapPost("/v1/routes/optimize", async (OptimizeRouteRequest request, RouteOptimizationService service, CancellationToken cancellationToken) =>
 {
     try
     {
-        var response = service.Optimize(request);
+        var response = await service.OptimizeAsync(request, cancellationToken);
         return Results.Ok(response);
     }
     catch (ArgumentException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+    catch (InvalidOperationException ex)
     {
         return Results.BadRequest(new { error = ex.Message });
     }
