@@ -2,6 +2,8 @@
 
 API de roteirização: recebe um ponto de origem e uma lista de paradas e devolve a melhor ordem de entrega.
 
+[![Screenshot-2026-06-18-at-18-37-17.png](https://i.postimg.cc/mrQRgHT1/Screenshot-2026-06-18-at-18-37-17.png)](https://postimg.cc/KKvC94km)
+
 ## Endpoint
 
 ```
