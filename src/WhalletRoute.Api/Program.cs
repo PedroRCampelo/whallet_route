@@ -9,11 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCors", policy =>
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+});
+
 builder.Services.AddScoped<IRouteSolver, OrToolsRouteSolver>();
 builder.Services.AddSingleton<IGeocodeCache, InMemoryGeocodeCache>();
 
 var googleApiKey = builder.Configuration["Google:GeocodingApiKey"]
-                   ?? throw new InvalidOperationException("Missing configuration 'Google:GeocodingApiKey'.");
+    ?? throw new InvalidOperationException("Missing configuration 'Google:GeocodingApiKey'.");
 
 builder.Services.AddHttpClient<IGeocoder, GoogleGeocoder>()
     .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(10));
@@ -34,6 +40,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("DevCors");
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 

@@ -29,8 +29,18 @@ public sealed class RouteOptimizationService
 
         var route = _solver.Solve(origin, stops);
 
+        var coordinateById = stops
+            .Append(origin)
+            .ToDictionary(stop => stop.Id, stop => stop.Coordinate);
+
         return new OptimizeRouteResponse
         {
+            Origin = new RoutePointResponse
+            {
+                Id = origin.Id,
+                Latitude = origin.Coordinate.Latitude,
+                Longitude = origin.Coordinate.Longitude
+            },
             TotalDistanceMeters = (int)Math.Round(route.TotalDistanceMeters),
             TotalDurationSeconds = (int)Math.Round(route.TotalDurationSeconds),
             Stops = route.Stops
@@ -38,6 +48,8 @@ public sealed class RouteOptimizationService
                 {
                     Id = stop.StopId,
                     Order = stop.Order,
+                    Latitude = coordinateById[stop.StopId].Latitude,
+                    Longitude = coordinateById[stop.StopId].Longitude,
                     LegDistanceMeters = (int)Math.Round(stop.LegDistanceMeters),
                     LegDurationSeconds = (int)Math.Round(stop.LegDurationSeconds)
                 })

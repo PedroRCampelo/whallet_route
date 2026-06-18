@@ -19,6 +19,7 @@ public sealed class GoogleGeocoder : IGeocoder
 
     public async Task<Coordinate> GeocodeAsync(string address, CancellationToken cancellationToken)
     {
+        // Try to get the address in Cache
         if (_cache.TryGet(address, out var cached) && cached is not null)
             return cached;
 
