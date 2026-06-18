@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Whallet Route · Roteirização para o seu ERP</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <style>
+        :root {
+            --bg: #f4f5f7;
+            --surface: #ffffff;
+            --ink: #14161d;
+            --muted: #767c8c;
+            --faint: #9aa0b0;
+            --line: #e6e8ee;
+            --primary: #4f46e5;
+            --primary-press: #4338ca;
+            --primary-soft: #eeedfb;
+            --route: #5b3df5;
+            --danger: #c2410c;
+            --radius: 16px;
+            --shadow: 0 1px 2px rgba(20,22,29,.04), 0 12px 32px rgba(20,22,29,.07);
+            --maxw: 1180px;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0; background: var(--bg); color: var(--ink);
+            font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+        }
+        a { color: inherit; text-decoration: none; }
+
+        .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+
+        .eyebrow {
+            font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+            text-transform: uppercase; letter-spacing: .14em; color: var(--primary); margin: 0;
+        }
+        .display {
+            font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+            letter-spacing: -.025em; color: var(--ink); margin: 0;
+        }
+
+        /* nav */
+        .nav { position: sticky; top: 0; z-index: 1000; background: rgba(244,245,247,.82); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 66px; }
+        .brand { display: flex; align-items: center; gap: 11px; }
+        .brand svg { width: 28px; height: 28px; }
+        .brand-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -.02em; }
+        .brand-name span { color: var(--primary); }
+        .nav-mid { display: flex; align-items: center; gap: 26px; }
+        .nav-mid a { font-size: 14px; font-weight: 500; color: var(--muted); }
+        .nav-mid a:hover { color: var(--ink); }
+        .nav-tagline { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--faint); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; background: var(--surface); }
+        .nav-right { display: flex; align-items: center; gap: 18px; }
+        .btn {
+            appearance: none; border: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; border-radius: 11px; padding: 11px 18px;
+            transition: background .15s ease, transform .05s ease, border-color .15s ease;
+        }
+        .btn:active { transform: translateY(1px); }
+        .btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+        .btn-dark { background: var(--ink); color: #fff; }
+        .btn-dark:hover { background: #000; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-press); }
+        .btn-ghost { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+        .btn-ghost:hover { border-color: var(--faint); }
+
+        /* hero */
+        .hero { padding: 76px 0 88px; }
+        .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; }
+        .hero-eyebrow { display: inline-block; background: var(--primary-soft); border-radius: 999px; padding: 7px 14px; margin-bottom: 26px; }
+        .hero h1 { font-size: 60px; line-height: 1.02; }
+        .hero-sub { font-size: 18px; color: var(--muted); margin: 26px 0 32px; max-width: 30em; }
+        .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+        .hero-meta { margin-top: 30px; display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--faint); }
+        .pill-method { background: var(--ink); color: #fff; border-radius: 7px; padding: 4px 9px; font-weight: 500; letter-spacing: .04em; }
+
+        .hero-visual { position: relative; aspect-ratio: 5 / 4; background: linear-gradient(180deg,#fbfbfd,#f3f3f8); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; }
+        .hero-visual svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .hero-cards { position: absolute; left: 22px; bottom: 22px; display: flex; gap: 12px; }
+        .hero-card { background: var(--surface); border: 1px solid var(--line); border-radius: 13px; padding: 13px 16px; box-shadow: 0 6px 18px rgba(20,22,29,.08); }
+        .hero-card b { display: block; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -.02em; }
+        .hero-card small { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+
+        /* sections */
+        .section { padding: 76px 0; border-top: 1px solid var(--line); }
+        .section-head { max-width: 640px; margin-bottom: 40px; }
+        .section-head .display { font-size: 38px; margin-top: 14px; }
+        .section-head p { font-size: 17px; color: var(--muted); margin: 14px 0 0; }
+
+        /* demo */
+        .demo-card { display: grid; grid-template-columns: 400px 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; min-height: 560px; }
+        .demo-panel { padding: 22px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 16px; }
+        .demo-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 0 0 8px; }
+        .input, .editor {
+            font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink); background: #fbfbfc;
+            border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; width: 100%;
+        }
+        .editor { line-height: 1.55; min-height: 170px; resize: vertical; tab-size: 2; }
+        .input:focus, .editor:focus { outline: 2px solid var(--primary); outline-offset: 1px; border-color: transparent; }
+        .demo-btn { width: 100%; }
+        .demo-btn:disabled { opacity: .6; cursor: progress; }
+
+        .stats { display: none; grid-template-columns: 1fr 1fr; gap: 11px; }
+        .stats.is-on { display: grid; }
+        .stat { background: #fbfbfc; border: 1px solid var(--line); border-radius: 12px; padding: 13px 14px; }
+        .stat b { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 25px; letter-spacing: -.02em; }
+        .stat small { display: block; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+        .seq-label { display: none; }
+        .seq { display: flex; flex-direction: column; }
+        .seq-row { display: flex; align-items: center; gap: 12px; padding: 11px 2px; border-bottom: 1px solid var(--line); }
+        .seq-row:last-child { border-bottom: 0; }
+        .chip { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: #fff; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+        .chip--origin { background: var(--ink); border-radius: 8px; font-size: 11px; }
+        .seq-id { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; }
+        .seq-leg { margin-left: auto; font-size: 12px; color: var(--muted); }
+
+        .demo-foot { display: flex; gap: 10px; margin-top: auto; }
+        .demo-foot .btn { flex: 1; font-size: 13px; padding: 10px; }
+
+        .msg { font-size: 13px; line-height: 1.5; padding: 11px 13px; border-radius: 10px; display: none; }
+        .msg.is-on { display: block; }
+        .msg--error { background: #fff4ed; color: var(--danger); border: 1px solid #fcd9c2; }
+
+        .demo-map { position: relative; }
+        #wr-map { position: absolute; inset: 0; background: var(--bg); }
+        .leaflet-container { font-family: 'Inter', sans-serif; }
+        .map-empty { position: absolute; inset: 0; z-index: 500; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+        .map-empty span { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--muted); background: rgba(255,255,255,.82); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; }
+
+        .wr-pin { width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color: #fff; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 14px; box-shadow: 0 2px 7px rgba(20,22,29,.28); }
+        .wr-pin--origin { background: var(--ink); border-radius: 9px; font-size: 11px; }
+        .wr-route { stroke-dasharray: 1 11; stroke-linecap: round; filter: drop-shadow(0 1px 2px rgba(91,61,245,.35)); animation: march 1.4s linear infinite; }
+        .hero-route { stroke-dasharray: 1 10; stroke-linecap: round; animation: march 1.6s linear infinite; }
+        @keyframes march { to { stroke-dashoffset: -12; } }
+
+        /* api */
+        .api-bar { display: flex; align-items: center; gap: 14px; margin-bottom: 26px; flex-wrap: wrap; }
+        .api-url { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--ink); }
+        .api-ct { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; }
+        .code-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .code-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
+        .code-head { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--line); background: #fbfbfc; }
+        .code-head span { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+        .code-copy { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); cursor: pointer; background: none; border: 0; }
+        .code-body { margin: 0; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.6; color: var(--ink); overflow: auto; max-height: 360px; white-space: pre; }
+
+        .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 48px; margin-top: 44px; }
+        .fields h3 { font-family: 'Space Grotesk', sans-serif; font-size: 17px; margin: 0 0 6px; }
+        .field-row { display: grid; grid-template-columns: 220px 1fr; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+        .field-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--primary); }
+        .field-desc { font-size: 13.5px; color: var(--muted); }
+
+        /* footer */
+        .footer { border-top: 1px solid var(--line); padding: 40px 0; }
+        .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+        .footer small { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--faint); }
+
+        @media (max-width: 980px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+            .hero h1 { font-size: 46px; }
+            .demo-card { grid-template-columns: 1fr; }
+            .demo-panel { border-right: 0; border-bottom: 1px solid var(--line); }
+            .demo-map { height: 60vh; }
+            .code-grid, .fields-grid { grid-template-columns: 1fr; }
+            .nav-mid, .nav-tagline { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) { .wr-route, .hero-route { animation: none; } }
+
+        @media print {
+            .nav, .hero, #api, .footer, .section-head, .demo-panel .demo-foot, .demo-eyebrow, .demo-panel .editor, .demo-panel .demo-btn, .demo-panel .input, .demo-panel .api-row, .msg { display: none !important; }
+            .section { border: 0; padding: 0; }
+            body { background: #fff; }
+            .demo-card { box-shadow: none; border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+    <div class="wrap nav-inner">
+        <div class="brand">
+            <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                <circle cx="7" cy="25" r="4" fill="#14161d"/><circle cx="25" cy="7" r="4" fill="#4f46e5"/>
+                <path d="M7 25C7 16 25 16 25 7" stroke="#5b3df5" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="1 5"/>
+            </svg>
+            <div class="brand-name">Whallet<span> Route</span></div>
+        </div>
+        <div class="nav-mid">
+            <a href="#demo">Roteirizar</a>
+            <a href="#api">API</a>
+            <div class="nav-tagline">gestão visual de cargas</div>
+        </div>
+        <div class="nav-right">
+            <a class="btn btn-dark" href="#demo">Começar</a>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+    <div class="wrap hero-grid">
+        <div>
+            <span class="hero-eyebrow eyebrow">API de roteirização</span>
+            <h1 class="display">A rota mais econômica, pronta para integrar ao seu ERP.</h1>
+            <p class="hero-sub">Envie origem e paradas. Receba a sequência ótima de entrega, distância, tempo — e um mapa pronto para mostrar ao cliente.</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="#demo">Roteirizar agora</a>
+                <a class="btn btn-ghost" href="#api">Ver a documentação</a>
+            </div>
+            <div class="hero-meta">
+                <span class="pill-method">POST</span>
+                <span>/v1/routes/optimize · JSON · resposta em segundos</span>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <svg viewBox="0 0 500 400" preserveAspectRatio="none" aria-hidden="true">
+                <g stroke="#e6e8ee" stroke-width="1">
+                    <line x1="0" y1="100" x2="500" y2="100"/><line x1="0" y1="200" x2="500" y2="200"/><line x1="0" y1="300" x2="500" y2="300"/>
+                    <line x1="125" y1="0" x2="125" y2="400"/><line x1="250" y1="0" x2="250" y2="400"/><line x1="375" y1="0" x2="375" y2="400"/>
+                </g>
+                <path class="hero-route" d="M70 340 L210 250 L320 180 L430 90" fill="none" stroke="#5b3df5" stroke-width="3"/>
+            </svg>
+            <svg viewBox="0 0 500 400" preserveAspectRatio="none" style="overflow:visible">
+                <g font-family="Space Grotesk" font-weight="600" font-size="13" fill="#fff" text-anchor="middle">
+                    <circle cx="210" cy="250" r="15" fill="#4f46e5"/><text x="210" y="255">2</text>
+                    <circle cx="320" cy="180" r="15" fill="#4f46e5"/><text x="320" y="185">3</text>
+                    <circle cx="430" cy="90" r="15" fill="#4f46e5"/><text x="430" y="95">5</text>
+                </g>
+            </svg>
+            <div class="hero-cards">
+                <div class="hero-card"><b>37,5 km</b><small>distância otimizada</small></div>
+                <div class="hero-card"><b>75 min</b><small>tempo estimado</small></div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- DEMO -->
+<section class="section" id="demo">
+    <div class="wrap">
+        <div class="section-head">
+            <p class="eyebrow">02 — Roteirizar</p>
+            <h2 class="display">Cole o JSON. Veja a rota.</h2>
+            <p>Sua requisição vira um mapa interativo e uma sequência de entrega otimizada — pronta para relatório.</p>
+        </div>
+
+        <div class="demo-card" id="wr-capture">
+            <div class="demo-panel">
+                <div class="api-row">
+                    <p class="demo-eyebrow">Endpoint</p>
+                    <input id="wr-api" class="input" value="http://localhost:5036" spellcheck="false" />
+                </div>
+                <div>
+                    <p class="demo-eyebrow">Requisição</p>
+                    <textarea id="wr-json" class="editor" spellcheck="false"></textarea>
+                </div>
+                <button id="wr-run" class="btn btn-primary demo-btn">Otimizar rota</button>
+                <div id="wr-msg" class="msg msg--error"></div>
+
+                <div id="wr-stats" class="stats">
+                    <div class="stat"><b id="wr-dist">—</b><small>Distância otimizada</small></div>
+                    <div class="stat"><b id="wr-time">—</b><small>Tempo estimado</small></div>
+                </div>
+
+                <div>
+                    <p class="demo-eyebrow seq-label" id="wr-seq-label">Sequência de entrega</p>
+                    <div id="wr-list" class="seq"></div>
+                </div>
+
+                <div class="demo-foot">
+                    <button id="wr-pdf" class="btn btn-ghost">Exportar PDF</button>
+                    <button id="wr-copy" class="btn btn-ghost">Copiar JSON</button>
+                </div>
+            </div>
+
+            <div class="demo-map">
+                <div id="wr-map"></div>
+                <div class="map-empty" id="wr-empty"><span>A rota aparece aqui após otimizar</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- API -->
+<section class="section" id="api">
+    <div class="wrap">
+        <div class="section-head">
+            <p class="eyebrow">03 — API</p>
+            <h2 class="display">Uma API. Uma chamada.</h2>
+            <p>Envie endereços. Receba coordenadas, ordem ótima, distância e tempo por trecho. Sem SDK, sem fricção.</p>
+        </div>
+
+        <div class="api-bar">
+            <span class="pill-method">POST</span>
+            <span class="api-url">/v1/routes/optimize</span>
+            <span class="api-ct">Content-Type: application/json</span>
+        </div>
+
+        <div class="code-grid">
+            <div class="code-card">
+                <div class="code-head"><span>Request</span><button class="code-copy" data-copy="req">copiar</button></div>
+                <pre class="code-body" id="code-req"></pre>
+            </div>
+            <div class="code-card">
+                <div class="code-head"><span>Response · 200</span><button class="code-copy" data-copy="res">copiar</button></div>
+                <pre class="code-body" id="code-res"></pre>
+            </div>
+        </div>
+
+        <div class="fields-grid">
+            <div class="fields">
+                <h3>Campos da requisição</h3>
+                <div class="field-row"><span class="field-name">origin.id</span><span class="field-desc">Identificador do centro de distribuição.</span></div>
+                <div class="field-row"><span class="field-name">origin.address</span><span class="field-desc">Endereço de partida em texto livre.</span></div>
+                <div class="field-row"><span class="field-name">stops[].id</span><span class="field-desc">Código do cliente / ponto de entrega.</span></div>
+                <div class="field-row"><span class="field-name">stops[].address</span><span class="field-desc">Endereço da parada a ser visitada.</span></div>
+                <div class="field-row"><span class="field-name">stops[].latitude</span><span class="field-desc">Alternativa ao endereço: coordenada pronta.</span></div>
+            </div>
+            <div class="fields">
+                <h3>Campos da resposta</h3>
+                <div class="field-row"><span class="field-name">totalDistanceMeters</span><span class="field-desc">Distância total da rota, em metros.</span></div>
+                <div class="field-row"><span class="field-name">totalDurationSeconds</span><span class="field-desc">Tempo total estimado, em segundos.</span></div>
+                <div class="field-row"><span class="field-name">stops[].order</span><span class="field-desc">Posição da parada na sequência ótima.</span></div>
+                <div class="field-row"><span class="field-name">stops[].latitude</span><span class="field-desc">Coordenada resolvida da parada.</span></div>
+                <div class="field-row"><span class="field-name">stops[].legDistanceMeters</span><span class="field-desc">Distância do trecho até a parada.</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="wrap footer-inner">
+        <div class="brand">
+            <svg viewBox="0 0 32 32" width="24" height="24" fill="none" aria-hidden="true">
+                <circle cx="7" cy="25" r="4" fill="#14161d"/><circle cx="25" cy="7" r="4" fill="#4f46e5"/>
+                <path d="M7 25C7 16 25 16 25 7" stroke="#5b3df5" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="1 5"/>
+            </svg>
+            <div class="brand-name">Whallet<span> Route</span></div>
+        </div>
+        <small>Roteirização para ERP · feito no Recife</small>
+    </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const DEFAULT_REQUEST = {
+        origin: { id: "DC", address: "Rua Padre Carapuceiro, 777, Recife, PE" },
+        stops: [
+            { id: "C0001-01", address: "Av. Conselheiro Aguiar, 2738, Boa Viagem, Recife, PE" },
+            { id: "C0002-01", address: "Rua da Aurora, 295, Boa Vista, Recife, PE" },
+            { id: "C0003-01", address: "Av. Caxangá, 1200, Madalena, Recife, PE" },
+            { id: "C0004-01", address: "Rua Amália Bernardino de Sousa, 532, Boa Viagem, Recife, PE" },
+            { id: "C0005-01", address: "Av. Fagundes Varela, 111, Jardim Atlântico, Olinda, PE" }
+        ]
+    };
+
+    const SAMPLE_RESPONSE = {
+        "origin": {
+            "id": "DC",
+            "latitude": -8.1190289,
+            "longitude": -34.9046335
+        },
+        "totalDistanceMeters": 37465,
+        "totalDurationSeconds": 4498,
+        "stops": [
+            {
+                "id": "C0004-01",
+                "order": 1,
+                "latitude": -8.1263192,
+                "longitude": -34.909066,
+                "legDistanceMeters": 946,
+                "legDurationSeconds": 114
+            },
+            {
+                "id": "C0003-01",
+                "order": 2,
+                "latitude": -8.051578,
+                "longitude": -34.9188818,
+                "legDistanceMeters": 8381,
+                "legDurationSeconds": 1006
+            },
+            {
+                "id": "C0005-01",
+                "order": 3,
+                "latitude": -7.9786555,
+                "longitude": -34.8393271,
+                "legDistanceMeters": 11937,
+                "legDurationSeconds": 1433
+            },
+            {
+                "id": "C0002-01",
+                "order": 4,
+                "latitude": -8.0609708,
+                "longitude": -34.8813796,
+                "legDistanceMeters": 10258,
+                "legDurationSeconds": 1231
+            },
+            {
+                "id": "C0001-01",
+                "order": 5,
+                "latitude": -8.1131332,
+                "longitude": -34.89312779999999,
+                "legDistanceMeters": 5943,
+                "legDurationSeconds": 713
+            }
+        ]
+    };
+
+    const $ = (id) => document.getElementById(id);
+    $('wr-json').value = JSON.stringify(DEFAULT_REQUEST, null, 2);
+    $('code-req').textContent = JSON.stringify(DEFAULT_REQUEST, null, 2);
+    $('code-res').textContent = JSON.stringify(SAMPLE_RESPONSE, null, 2);
+
+    const map = L.map('wr-map', { zoomControl: true, attributionControl: true }).setView([-8.05, -34.9], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
+    }).addTo(map);
+    setTimeout(() => map.invalidateSize(), 200);
+
+    let drawn = [];
+    let lastResponse = null;
+    function clearMap() { drawn.forEach((l) => map.removeLayer(l)); drawn = []; }
+    function showError(t) { const e = $('wr-msg'); e.textContent = t; e.classList.add('is-on'); }
+    function clearError() { $('wr-msg').classList.remove('is-on'); }
+
+    function pin(order, isOrigin) {
+        const cls = isOrigin ? 'wr-pin wr-pin--origin' : 'wr-pin';
+        return L.divIcon({ html: `<div class="${cls}">${isOrigin ? 'CD' : order}</div>`, className: '', iconSize: [30, 30], iconAnchor: [15, 15] });
+    }
+    function km(m) { return (m / 1000).toFixed(1).replace('.', ',') + ' km'; }
+    function leg(m) { return m < 1000 ? m + ' m' : km(m); }
+    function mins(s) { return Math.round(s / 60) + ' min'; }
+
+    async function roadGeometry(points) {
+        const coords = points.map((p) => `${p.lng},${p.lat}`).join(';');
+        const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`);
+        if (!res.ok) throw new Error('osrm');
+        const data = await res.json();
+        if (!data.routes || !data.routes.length) throw new Error('osrm');
+        return data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
+    }
+    function inputCoords() {
+        const out = {};
+        try {
+            const parsed = JSON.parse($('wr-json').value);
+            [parsed.origin, ...(parsed.stops || [])].forEach((s) => {
+                if (s && s.latitude != null && s.longitude != null) out[s.id] = { lat: s.latitude, lng: s.longitude };
+            });
+        } catch (e) {}
+        return out;
+    }
+
+    async function optimize() {
+        clearError();
+        const api = $('wr-api').value.trim().replace(/\/$/, '');
+        let body;
+        try { body = JSON.parse($('wr-json').value); }
+        catch (e) { showError('O JSON está inválido. Revise as chaves e vírgulas.'); return; }
+
+        const btn = $('wr-run');
+        btn.disabled = true; btn.textContent = 'Otimizando...';
+        let data;
+        try {
+            const res = await fetch(`${api}/v1/routes/optimize`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            data = await res.json();
+            if (!res.ok) { showError(data.error || 'A API recusou a requisição.'); return; }
+        } catch (e) {
+            showError('Não consegui falar com a API. Ela está rodando? Confira a URL acima e o CORS.'); return;
+        } finally {
+            btn.disabled = false; btn.textContent = 'Otimizar rota';
+        }
+        lastResponse = data;
+        render(data);
+    }
+
+    async function render(data) {
+        clearMap();
+        $('wr-empty').style.display = 'none';
+        const fallback = inputCoords();
+        const coordOf = (p) => (p.latitude != null ? { lat: p.latitude, lng: p.longitude } : fallback[p.id]);
+
+        const origin = { id: data.origin.id, ...coordOf(data.origin), isOrigin: true };
+        const stops = data.stops.map((s) => ({ id: s.id, order: s.order, legDistanceMeters: s.legDistanceMeters, ...coordOf(s) }));
+        const ordered = [origin, ...stops].filter((p) => p && p.lat != null);
+
+        ordered.forEach((p) => drawn.push(L.marker([p.lat, p.lng], { icon: pin(p.order, p.isOrigin) }).addTo(map)));
+
+        let line;
+        try { line = await roadGeometry(ordered); }
+        catch (e) { line = ordered.map((p) => [p.lat, p.lng]); }
+        drawn.push(L.polyline(line, { color: '#5b3df5', weight: 4.5, opacity: .95, className: 'wr-route' }).addTo(map));
+
+        map.fitBounds(L.latLngBounds(ordered.map((p) => [p.lat, p.lng])), { padding: [55, 55] });
+
+        $('wr-dist').textContent = km(data.totalDistanceMeters);
+        $('wr-time').textContent = mins(data.totalDurationSeconds);
+        $('wr-stats').classList.add('is-on');
+        $('wr-seq-label').style.display = 'block';
+
+        const list = $('wr-list'); list.innerHTML = '';
+        const o = document.createElement('div'); o.className = 'seq-row';
+        o.innerHTML = `<div class="chip chip--origin">CD</div><div class="seq-id">${origin.id}</div><div class="seq-leg">origem</div>`;
+        list.appendChild(o);
+        stops.forEach((s) => {
+            const r = document.createElement('div'); r.className = 'seq-row';
+            r.innerHTML = `<div class="chip">${s.order}</div><div class="seq-id">${s.id}</div><div class="seq-leg">${leg(s.legDistanceMeters)}</div>`;
+            list.appendChild(r);
+        });
+    }
+
+    $('wr-run').addEventListener('click', optimize);
+    $('wr-pdf').addEventListener('click', () => window.print());
+    $('wr-copy').addEventListener('click', async (e) => {
+        const payload = lastResponse ? JSON.stringify(lastResponse, null, 2) : $('wr-json').value;
+        try { await navigator.clipboard.writeText(payload); e.target.textContent = 'Copiado!'; setTimeout(() => (e.target.textContent = 'Copiar JSON'), 1400); } catch (err) {}
+    });
+    document.querySelectorAll('.code-copy').forEach((b) => b.addEventListener('click', async () => {
+        const text = b.dataset.copy === 'req' ? $('code-req').textContent : $('code-res').textContent;
+        try { await navigator.clipboard.writeText(text); const old = b.textContent; b.textContent = 'copiado!'; setTimeout(() => (b.textContent = old), 1400); } catch (e) {}
+    }));
+</script>
+</body>
+</html>
