@@ -3,6 +3,9 @@ using WhalletRoute.Application.Routing;
 using WhalletRoute.Application.Routing.Contracts;
 using WhalletRoute.Infrastructure.Geocoding;
 using WhalletRoute.Infrastructure.Routing;
+using WhalletRoute.Api.Authentication;
+using WhalletRoute.Application.Tenancy;
+using WhalletRoute.Infrastructure.Tenancy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("DevCors", policy =>
         policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
+
+builder.Services.AddSingleton<ITenantResolver, InMemoryTenantResolver>();
+builder.Services.AddScoped<ITenantContext, TenantContext>();
 
 builder.Services.AddScoped<IRouteSolver, OrToolsRouteSolver>();
 builder.Services.AddSingleton<IGeocodeCache, InMemoryGeocodeCache>();
@@ -42,6 +48,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("DevCors");
+
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
