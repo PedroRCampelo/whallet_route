@@ -637,7 +637,7 @@
         try {
             const res = await fetch(`${api}/v1/routes/optimize`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-Api-Key': 'wr_dev_local_key_123' },
                 body: JSON.stringify(body)
             });
             data = await res.json();
