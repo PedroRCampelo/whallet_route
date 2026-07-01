@@ -1,0 +1,64 @@
+.demo { background: var(--demo-bg); padding: 24px 0 84px; }
+.demo-card {
+    display: grid; grid-template-columns: 404px 1fr;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: var(--shadow-card); overflow: hidden; min-height: 580px;
+}
+.demo-panel { padding: 24px; border-right: 1px solid var(--line-soft); display: flex; flex-direction: column; gap: 16px; max-height: 760px; overflow: auto; }
+.field-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .13em; color: var(--muted); margin-bottom: 8px; }
+.input, .editor {
+    width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink);
+    background: var(--surface-soft); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; outline: none;
+}
+.editor { height: 200px; resize: vertical; line-height: 1.55; color: #2a2a3a; padding: 12px; tab-size: 2; }
+.input:focus, .editor:focus { border-color: var(--primary); }
+.demo-run { width: 100%; padding: 15px; font-size: 15.5px; }
+.demo-run:disabled { opacity: .65; cursor: progress; }
+
+.note { display: none; font-size: 13px; line-height: 1.5; padding: 11px 13px; border-radius: 10px; }
+.note.is-on { display: block; }
+.note--error { background: var(--error-bg); color: var(--error-ink); border: 1px solid var(--error-line); }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.stat { background: var(--surface-soft); border: 1px solid var(--line-soft); border-radius: 12px; padding: 14px; }
+.stat b { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 25px; letter-spacing: -.02em; }
+.stat small { display: block; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+.seq-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .13em; color: var(--muted); margin: 4px 0 8px; }
+.seq-row { display: flex; align-items: center; gap: 12px; padding: 11px 2px; border-bottom: 1px solid var(--line-faint); }
+.seq-row:last-child { border-bottom: 0; }
+.chip { flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 12px; }
+.chip--origin { border-radius: 8px; background: var(--ink); font-size: 11px; }
+.seq-id { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; }
+.seq-leg { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--faint); }
+
+.demo-foot { display: flex; gap: 10px; margin-top: 4px; }
+.demo-foot .btn { flex: 1; font-size: 13.5px; padding: 11px; gap: 7px; }
+
+.demo-map { position: relative; min-height: 580px; background: #eceef4; }
+.demo-map .wr-map { position: absolute; inset: 0; }
+.leaflet-container { font-family: 'Hanken Grotesk', sans-serif; background: #eceef4; }
+.leaflet-bar a { border-radius: 9px !important; color: var(--ink) !important; }
+.leaflet-control-attribution { font-size: 10px !important; }
+.map-empty { position: absolute; inset: 0; z-index: 500; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+.map-empty span { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--muted); background: rgba(255, 255, 255, .85); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; }
+
+/* leaflet pins + route */
+.wr-pin { width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color: #fff; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 14px; box-shadow: 0 2px 8px rgba(20, 18, 40, .3); }
+.wr-pin--origin { background: var(--ink); border-radius: 9px; font-size: 11px; }
+.wr-route { stroke-dasharray: 2 11; stroke-linecap: round; filter: drop-shadow(0 1px 2px rgba(91, 61, 245, .35)); animation: routemarch 1.4s linear infinite; }
+
+@media (max-width: 980px) {
+    .demo-card { grid-template-columns: 1fr; }
+    .demo-panel { border-right: 0; border-bottom: 1px solid var(--line-soft); max-height: none; }
+    .demo-map, .demo-map .wr-map { position: relative; }
+    .demo-map { min-height: 0; height: 62vh; }
+    .demo-map .wr-map { position: absolute; inset: 0; }
+}
+
+@media print {
+    .demo { padding: 0; background: #fff; }
+    .demo-card { box-shadow: none; border: 1px solid #cfcfdd; grid-template-columns: 1fr; }
+    .demo-panel { border-right: 0; }
+    .demo-map { min-height: 0; height: 430px; }
+}

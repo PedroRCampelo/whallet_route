@@ -1,0 +1,12 @@
+.portal { min-height: 100vh; background: var(--surface-soft); }
+.portal-topbar {
+    height: 64px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; background: var(--surface); border-bottom: 1px solid var(--line-nav);
+}
+.portal-brand { display: flex; align-items: center; gap: 11px; }
+.portal-brand-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -.02em; }
+.portal-brand-name span { color: var(--primary); }
+.portal-nav { display: flex; align-items: center; gap: 22px; }
+.portal-nav a { color: var(--muted); font-size: 14px; font-weight: 600; transition: color .15s ease; }
+.portal-nav a:hover, .portal-nav a.is-active { color: var(--ink); }
+.portal-main { padding: 44px 28px; max-width: var(--maxw); margin: 0 auto; }

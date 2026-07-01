@@ -1,0 +1,8 @@
+.coming-soon { max-width: 640px; }
+.coming-soon h1 { font-size: 32px; letter-spacing: -.02em; margin: 0 0 14px; }
+.coming-soon p { font-size: 15.5px; line-height: 1.6; color: var(--body); margin: 0 0 22px; }
+.coming-soon ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.coming-soon li {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+}

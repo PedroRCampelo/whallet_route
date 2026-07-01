@@ -1,0 +1,18 @@
+.how { background: var(--dark); color: #fff; position: relative; overflow: hidden; padding: 84px 0; }
+.how-bg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .5; pointer-events: none; }
+.how-head { display: flex; align-items: flex-start; gap: 22px; max-width: 760px; margin-bottom: 48px; position: relative; }
+.how-head .sec-num { color: rgba(139, 118, 255, .3); }
+.how-head .eyebrow { color: #b3a8ff; }
+.how-head h2 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.06; letter-spacing: -.025em; margin: 0; }
+.steps { position: relative; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; }
+.steps-rail { position: absolute; left: 8%; right: 8%; top: 23px; height: 2px; opacity: .5; background: repeating-linear-gradient(90deg, var(--step) 0 3px, transparent 3px 11px); }
+.step { position: relative; }
+.step-n { width: 46px; height: 46px; border-radius: 13px; background: var(--step); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 20px; box-shadow: 0 0 0 6px var(--dark); }
+.step h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 19px; margin: 0 0 8px; }
+.step p { font-size: 14.5px; line-height: 1.55; color: #b9b6d6; margin: 0; text-wrap: pretty; }
+
+@media (max-width: 760px) {
+    .steps { grid-template-columns: 1fr; gap: 30px; }
+    .steps-rail { display: none; }
+    .how-head h2 { font-size: 30px; }
+}

@@ -1,0 +1,36 @@
+:root {
+    /* surfaces */
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-soft: #fbfbfc;
+    --demo-bg: #f5f4fb;
+    --dark: #15132b;
+
+    /* ink */
+    --ink: #14161d;
+    --body: #5b5f6e;
+    --muted: #767c8c;
+    --faint: #9aa0b0;
+
+    /* lines */
+    --line: #e7e6f3;
+    --line-soft: #eeedf6;
+    --line-faint: #f0f0f7;
+    --line-btn: #e4e4ee;
+    --line-nav: #ececf3;
+
+    /* brand */
+    --primary: #5b3df5;
+    --primary-press: #4a2fd6;
+    --step: #6b54ff;
+    --ghost-num: #ddd9f5;
+
+    /* feedback */
+    --error-bg: #fff4ed;
+    --error-ink: #c2410c;
+    --error-line: #fcd9c2;
+
+    --maxw: 1180px;
+    --shadow-card: 0 30px 70px -52px rgba(20, 18, 40, .55);
+    --shadow-soft: 0 10px 26px -16px rgba(20, 18, 40, .4);
+}
