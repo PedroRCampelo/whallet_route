@@ -6,11 +6,19 @@ using WhalletRoute.Infrastructure.Routing;
 using WhalletRoute.Api.Authentication;
 using WhalletRoute.Application.Tenancy;
 using WhalletRoute.Infrastructure.Tenancy;
+using Microsoft.EntityFrameworkCore;
+using WhalletRoute.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var connectionString = builder.Configuration.GetConnectionString("Postgres")
+                       ?? throw new InvalidOperationException("Missing connection string 'Postgres'.");
+
+builder.Services.AddDbContext<WhalletRouteDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddCors(options =>
 {

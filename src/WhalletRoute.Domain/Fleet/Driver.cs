@@ -11,6 +11,8 @@ public sealed class Driver
     public string? LicenseCategory { get; }
     public DateOnly? LicenseExpiry { get; }
 
+    private Driver() { }
+    
     public Driver(
         string tenantId, string name,
         string? document = null, string? phone = null,

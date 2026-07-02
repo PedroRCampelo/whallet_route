@@ -8,7 +8,9 @@ public sealed class Vehicle
     public double CapacityKg { get; }
     public double CapacityM3 { get; }
     public string? Description { get; }
-
+    
+    private Vehicle() { }
+    
     public Vehicle(
         string tenantId, string plate,
         double capacityKg = 0, double capacityM3 = 0, string? description = null)
