@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using WhalletRoute.Domain.Deliveries;
 using WhalletRoute.Domain.Fleet;
+using WhalletRoute.Infrastructure.Persistence.Configurations;
 
 namespace WhalletRoute.Infrastructure.Persistence;
 
@@ -7,11 +9,14 @@ public sealed class WhalletRouteDbContext : DbContext
 {
     public WhalletRouteDbContext(DbContextOptions<WhalletRouteDbContext> options) : base(options) { }
 
+    public DbSet<Cargo> Cargos => Set<Cargo>();
     public DbSet<Driver> Drivers => Set<Driver>();
     public DbSet<Vehicle> Vehicles => Set<Vehicle>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new CargoConfiguration());
+
         modelBuilder.Entity<Driver>(b =>
         {
             b.ToTable("drivers");

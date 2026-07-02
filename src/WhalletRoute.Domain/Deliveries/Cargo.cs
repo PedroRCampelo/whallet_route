@@ -17,6 +17,8 @@ public sealed class Cargo
     public DateTime CreatedAt { get; }
     public IReadOnlyList<Delivery> Deliveries => _deliveries;
 
+    private Cargo() { }
+    
     public Cargo(string tenantId, string externalId, string originAddress)
     {
         if (string.IsNullOrWhiteSpace(tenantId))

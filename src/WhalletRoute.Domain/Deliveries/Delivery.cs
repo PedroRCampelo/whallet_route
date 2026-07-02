@@ -21,6 +21,8 @@ public sealed class Delivery
     public DeliveryStatus Status { get; private set; }
     public IReadOnlyList<StatusChange> History => _history;
 
+    private Delivery() { }
+    
     public Delivery(
         string externalId, string clientId, string clientName, string address,
         double weightKg = 0, double volumeM3 = 0, DeliveryWindow? window = null,
