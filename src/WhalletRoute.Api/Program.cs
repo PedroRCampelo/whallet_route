@@ -26,7 +26,7 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
-builder.Services.AddSingleton<ITenantResolver, InMemoryTenantResolver>();
+builder.Services.AddScoped<ITenantResolver, DbTenantResolver>();
 builder.Services.AddScoped<ITenantContext, TenantContext>();
 
 builder.Services.AddScoped<IRouteSolver, OrToolsRouteSolver>();
@@ -48,6 +48,13 @@ builder.Services.AddScoped<IGeocoder>(sp =>
 builder.Services.AddScoped<RouteOptimizationService>();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<WhalletRouteDbContext>();
+    await DbSeeder.SeedAsync(db);
+}
 
 if (app.Environment.IsDevelopment())
 {
