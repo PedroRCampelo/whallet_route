@@ -5,6 +5,8 @@ public sealed class Tenant
     public string Id { get; }
     public string Name { get; }
 
+    private Tenant() { }
+    
     public Tenant(string id, string name)
     {
         if (string.IsNullOrWhiteSpace(id))
