@@ -8,6 +8,8 @@ using WhalletRoute.Application.Tenancy;
 using WhalletRoute.Infrastructure.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using WhalletRoute.Infrastructure.Persistence;
+using WhalletRoute.Application.Cargos;
+using WhalletRoute.Application.Cargos.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +63,12 @@ builder.Services.AddScoped<IGeocoder>(sp =>
 });
 #endregion
 
+#region Cargo
+builder.Services.AddScoped<ICargoRepository, EfCargoRepository>();
+builder.Services.AddScoped<CargoService>();
+#endregion
+
+
 #endregion
 
 var app = builder.Build();
@@ -101,6 +109,33 @@ app.MapPost("/v1/routes/optimize", async (OptimizeRouteRequest request, RouteOpt
         return Results.BadRequest(new { error = ex.Message });
     }
 });
+
+app.MapPost("/v1/cargos", async (CreateCargoRequest request, CargoService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var response = await service.CreateAsync(tenant.Current!.Id, request, cancellationToken);
+        return Results.Created($"/v1/cargos/{response.Id}", response);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+});
+
+app.MapGet("/v1/cargos", async (CargoService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+    Results.Ok(await service.ListAsync(tenant.Current!.Id, cancellationToken)));
+
+app.MapGet("/v1/cargos/{id:guid}", async (Guid id, CargoService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    var cargo = await service.GetAsync(tenant.Current!.Id, id, cancellationToken);
+    return cargo is null ? Results.NotFound() : Results.Ok(cargo);
+});
+
 #endregion
 
 app.Run();
