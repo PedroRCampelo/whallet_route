@@ -6,17 +6,17 @@ public sealed class Delivery
 {
     private readonly List<StatusChange> _history = new();
 
-    public Guid Id { get; }
-    public string ExternalId { get; }
-    public string ClientId { get; }
-    public string ClientName { get; }
-    public string Address { get; }
+    public Guid Id { get; private set; }
+    public string ExternalId { get; private set; } = null!;
+    public string ClientId { get; private set; } = null!;
+    public string ClientName { get; private set; } = null!;
+    public string Address { get; private set; } = null!;
     public Coordinate? Coordinate { get; private set; }
-    public double WeightKg { get; }
-    public double VolumeM3 { get; }
-    public DeliveryWindow? Window { get; }
-    public string? Phone { get; }
-    public string? Instructions { get; }
+    public double WeightKg { get; private set; }
+    public double VolumeM3 { get; private set; }
+    public DeliveryWindow? Window { get; private set; }
+    public string? Phone { get; private set; }
+    public string? Instructions { get; private set; }
     public int? Order { get; private set; }
     public DeliveryStatus Status { get; private set; }
     public IReadOnlyList<StatusChange> History => _history;

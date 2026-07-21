@@ -2,10 +2,10 @@ namespace WhalletRoute.Domain.Tenancy;
 
 public sealed class ApiKey
 {
-    public Guid Id { get; }
-    public string TenantId { get; }
-    public string KeyHash { get; }
-    public DateTime CreatedAt { get; }
+    public Guid Id { get; private set; }
+    public string TenantId { get; private set; } = null!;
+    public string KeyHash { get; private set; } = null!;
+    public DateTime CreatedAt { get; private set; }
 
     private ApiKey() { }
 

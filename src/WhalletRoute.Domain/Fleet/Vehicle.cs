@@ -2,12 +2,12 @@ namespace WhalletRoute.Domain.Fleet;
 
 public sealed class Vehicle
 {
-    public Guid Id { get; }
-    public string TenantId { get; }
-    public string Plate { get; }
-    public double CapacityKg { get; }
-    public double CapacityM3 { get; }
-    public string? Description { get; }
+    public Guid Id { get; private set; }
+    public string TenantId { get; private set; } = null!;
+    public string Plate { get; private set; } = null!;
+    public double CapacityKg { get; private set; }
+    public double CapacityM3 { get; private set; }
+    public string? Description { get; private set; }
     
     private Vehicle() { }
     

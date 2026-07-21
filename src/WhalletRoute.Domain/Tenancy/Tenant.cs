@@ -2,8 +2,8 @@ namespace WhalletRoute.Domain.Tenancy;
 
 public sealed class Tenant
 {
-    public string Id { get; }
-    public string Name { get; }
+    public string Id { get; private set; } = null!;
+    public string Name { get; private set; } = null!;
 
     private Tenant() { }
     

@@ -2,14 +2,14 @@ namespace WhalletRoute.Domain.Fleet;
 
 public sealed class Driver
 {
-    public Guid Id { get; }
-    public string TenantId { get; }
-    public string Name { get; }
-    public string? Document { get; }
-    public string? Phone { get; }
-    public string? LicenseNumber { get; }
-    public string? LicenseCategory { get; }
-    public DateOnly? LicenseExpiry { get; }
+    public Guid Id { get; private set; }
+    public string TenantId { get; private set; } = null!;
+    public string Name { get; private set; } = null!;
+    public string? Document { get; private set; }
+    public string? Phone { get; private set; }
+    public string? LicenseNumber { get; private set; }
+    public string? LicenseCategory { get; private set; }
+    public DateOnly? LicenseExpiry { get; private set; }
 
     private Driver() { }
     

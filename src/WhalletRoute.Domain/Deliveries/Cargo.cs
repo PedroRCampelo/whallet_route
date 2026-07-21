@@ -6,15 +6,15 @@ public sealed class Cargo
 {
     private readonly List<Delivery> _deliveries = new();
 
-    public Guid Id { get; }
-    public string TenantId { get; }
-    public string ExternalId { get; }
-    public string OriginAddress { get; }
+    public Guid Id { get; private set; }
+    public string TenantId { get; private set; } = null!;
+    public string ExternalId { get; private set; } = null!;
+    public string OriginAddress { get; private set; } = null!;
     public Coordinate? OriginCoordinate { get; private set; }
     public CargoStatus Status { get; private set; }
     public Guid? DriverId { get; private set; }
     public Guid? VehicleId { get; private set; }
-    public DateTime CreatedAt { get; }
+    public DateTime CreatedAt { get; private set; }
     public IReadOnlyList<Delivery> Deliveries => _deliveries;
 
     private Cargo() { }
