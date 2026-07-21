@@ -1,14 +1,24 @@
 using WhalletRoute.Application.Cargos.Contracts;
+using WhalletRoute.Application.Geocoding;
+using WhalletRoute.Application.Routing;
 using WhalletRoute.Domain.Deliveries;
 using WhalletRoute.Domain.Geo;
+using WhalletRoute.Domain.Routing;
 
 namespace WhalletRoute.Application.Cargos;
 
 public sealed class CargoService
 {
     private readonly ICargoRepository _repository;
+    private readonly IGeocoder _geocoder;
+    private readonly IRouteSolver _solver;
 
-    public CargoService(ICargoRepository repository) => _repository = repository;
+    public CargoService(ICargoRepository repository, IGeocoder geocoder, IRouteSolver solver)
+    {
+        _repository = repository;
+        _geocoder = geocoder;
+        _solver = solver;
+    }
 
     public async Task<CargoResponse> CreateAsync(string tenantId, CreateCargoRequest request, CancellationToken cancellationToken)
     {
@@ -30,6 +40,37 @@ public sealed class CargoService
             cargo.AddDelivery(ToDelivery(item));
 
         await _repository.AddAsync(cargo, cancellationToken);
+        await _repository.SaveChangesAsync(cancellationToken);
+
+        return ToResponse(cargo);
+    }
+
+    public async Task<CargoResponse?> RouteAsync(string tenantId, Guid id, CancellationToken cancellationToken)
+    {
+        var cargo = await _repository.GetByIdAsync(tenantId, id, cancellationToken);
+        if (cargo is null)
+            return null;
+
+        if (cargo.OriginCoordinate is null)
+            cargo.SetOriginCoordinate(await _geocoder.GeocodeAsync(cargo.OriginAddress, cancellationToken));
+
+        foreach (var delivery in cargo.Deliveries.Where(d => d.Coordinate is null))
+            delivery.SetCoordinate(await _geocoder.GeocodeAsync(delivery.Address, cancellationToken));
+
+        var origin = new Stop(cargo.Id.ToString(), cargo.OriginCoordinate!);
+        var stops = cargo.Deliveries
+            .Select(d => new Stop(d.Id.ToString(), d.Coordinate!))
+            .ToList();
+
+        var route = _solver.Solve(origin, stops);
+
+        foreach (var orderedStop in route.Stops)
+        {
+            var delivery = cargo.Deliveries.First(d => d.Id.ToString() == orderedStop.StopId);
+            delivery.SetOrder(orderedStop.Order);
+        }
+
+        cargo.MarkRouted();
         await _repository.SaveChangesAsync(cancellationToken);
 
         return ToResponse(cargo);
@@ -83,6 +124,7 @@ public sealed class CargoService
         VehicleId = cargo.VehicleId,
         CreatedAt = cargo.CreatedAt,
         Deliveries = cargo.Deliveries
+            .OrderBy(d => d.Order ?? int.MaxValue)
             .Select(d => new DeliveryResponse
             {
                 Id = d.Id,

@@ -136,6 +136,19 @@ app.MapGet("/v1/cargos/{id:guid}", async (Guid id, CargoService service, ITenant
     return cargo is null ? Results.NotFound() : Results.Ok(cargo);
 });
 
+app.MapPost("/v1/cargos/{id:guid}/route", async (Guid id, CargoService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var cargo = await service.RouteAsync(tenant.Current!.Id, id, cancellationToken);
+        return cargo is null ? Results.NotFound() : Results.Ok(cargo);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+});
+
 #endregion
 
 app.Run();

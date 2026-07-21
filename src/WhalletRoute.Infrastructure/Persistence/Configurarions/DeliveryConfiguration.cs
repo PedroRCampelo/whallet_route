@@ -15,6 +15,13 @@ public static class DeliveryConfiguration
         builder.Property(d => d.ExternalId).IsRequired();
         builder.Property(d => d.ClientId).IsRequired();
         builder.Property(d => d.Status).HasConversion<string>();
+        
+        builder.Property(d => d.ClientName).IsRequired();
+        builder.Property(d => d.Address).IsRequired();
+        builder.Property(d => d.WeightKg);
+        builder.Property(d => d.VolumeM3);
+        builder.Property(d => d.Phone);
+        builder.Property(d => d.Instructions);
 
         builder.OwnsOne(d => d.Coordinate, o =>
         {
@@ -44,5 +51,6 @@ public static class DeliveryConfiguration
                 o.Property(p => p.Longitude).HasColumnName("longitude");
             });
         });
+        
     }
 }
