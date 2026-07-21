@@ -60,3 +60,17 @@ public sealed record CargoSummaryResponse
     public required int DeliveryCount { get; init; }
     public required DateTime CreatedAt { get; init; }
 }
+
+public sealed record RefuseDeliveryRequest
+{
+    public required string Reason { get; init; }
+    public double? Latitude { get; init; }
+    public double? Longitude { get; init; }
+}
+
+public sealed record DeliverRequest
+{
+    public double? Latitude { get; init; }
+    public double? Longitude { get; init; }
+    public string? Note { get; init; }
+}

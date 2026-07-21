@@ -26,6 +26,11 @@ public sealed class WhalletRouteDbContext : DbContext
             b.HasKey(d => d.Id);
             b.Property(d => d.TenantId).IsRequired();
             b.Property(d => d.Name).IsRequired();
+            b.Property(d => d.Document);
+            b.Property(d => d.Phone);
+            b.Property(d => d.LicenseNumber);
+            b.Property(d => d.LicenseCategory);
+            b.Property(d => d.LicenseExpiry);
         });
 
         modelBuilder.Entity<Vehicle>(b =>
@@ -34,6 +39,9 @@ public sealed class WhalletRouteDbContext : DbContext
             b.HasKey(v => v.Id);
             b.Property(v => v.TenantId).IsRequired();
             b.Property(v => v.Plate).IsRequired();
+            b.Property(v => v.CapacityKg);
+            b.Property(v => v.CapacityM3);
+            b.Property(v => v.Description);
         });
 
         modelBuilder.Entity<Tenant>(b =>

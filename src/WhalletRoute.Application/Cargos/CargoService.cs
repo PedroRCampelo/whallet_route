@@ -75,6 +75,80 @@ public sealed class CargoService
 
         return ToResponse(cargo);
     }
+    
+    public async Task<CargoResponse?> DispatchAsync(string tenantId, Guid id, CancellationToken cancellationToken)
+    {
+        var cargo = await _repository.GetByIdAsync(tenantId, id, cancellationToken);
+        if (cargo is null)
+            return null;
+
+        cargo.Dispatch();
+
+        foreach (var delivery in cargo.Deliveries)
+            delivery.MarkEnRoute();
+
+        await _repository.SaveChangesAsync(cancellationToken);
+        return ToResponse(cargo);
+    }
+
+    public async Task<CargoResponse?> CancelDispatchAsync(string tenantId, Guid id, CancellationToken cancellationToken)
+    {
+        var cargo = await _repository.GetByIdAsync(tenantId, id, cancellationToken);
+        if (cargo is null)
+            return null;
+
+        cargo.CancelDispatch();
+        await _repository.SaveChangesAsync(cancellationToken);
+        return ToResponse(cargo);
+    }
+
+    public async Task<CargoResponse?> DeliverAsync(string tenantId, Guid cargoId, Guid deliveryId, DeliverRequest request, CancellationToken cancellationToken)
+    {
+        var cargo = await _repository.GetByIdAsync(tenantId, cargoId, cancellationToken);
+        if (cargo is null)
+            return null;
+
+        var delivery = cargo.Deliveries.FirstOrDefault(d => d.Id == deliveryId);
+        if (delivery is null)
+            return null;
+
+        delivery.MarkDelivered(ToCoordinate(request.Latitude, request.Longitude), request.Note);
+        CompleteIfFinished(cargo);
+
+        await _repository.SaveChangesAsync(cancellationToken);
+        return ToResponse(cargo);
+    }
+
+    public async Task<CargoResponse?> RefuseAsync(string tenantId, Guid cargoId, Guid deliveryId, RefuseDeliveryRequest request, CancellationToken cancellationToken)
+    {
+        var cargo = await _repository.GetByIdAsync(tenantId, cargoId, cancellationToken);
+        if (cargo is null)
+            return null;
+
+        var delivery = cargo.Deliveries.FirstOrDefault(d => d.Id == deliveryId);
+        if (delivery is null)
+            return null;
+
+        delivery.MarkRefused(request.Reason, ToCoordinate(request.Latitude, request.Longitude));
+        CompleteIfFinished(cargo);
+
+        await _repository.SaveChangesAsync(cancellationToken);
+        return ToResponse(cargo);
+    }
+
+    private static Coordinate? ToCoordinate(double? latitude, double? longitude)
+        => latitude is not null && longitude is not null
+            ? new Coordinate(latitude.Value, longitude.Value)
+            : null;
+
+    private static void CompleteIfFinished(Cargo cargo)
+    {
+        var allFinished = cargo.Deliveries.All(d =>
+            d.Status is DeliveryStatus.Delivered or DeliveryStatus.Refused);
+
+        if (allFinished && cargo.Status == CargoStatus.Dispatched)
+            cargo.Complete();
+    }
 
     public async Task<CargoResponse?> GetAsync(string tenantId, Guid id, CancellationToken cancellationToken)
     {

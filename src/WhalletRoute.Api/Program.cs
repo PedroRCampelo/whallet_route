@@ -149,6 +149,58 @@ app.MapPost("/v1/cargos/{id:guid}/route", async (Guid id, CargoService service, 
     }
 });
 
+app.MapPost("/v1/cargos/{id:guid}/dispatch", async (Guid id, CargoService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var cargo = await service.DispatchAsync(tenant.Current!.Id, id, cancellationToken);
+        return cargo is null ? Results.NotFound() : Results.Ok(cargo);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+});
+
+app.MapPost("/v1/cargos/{id:guid}/cancel-dispatch", async (Guid id, CargoService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var cargo = await service.CancelDispatchAsync(tenant.Current!.Id, id, cancellationToken);
+        return cargo is null ? Results.NotFound() : Results.Ok(cargo);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+});
+
+app.MapPost("/v1/cargos/{cargoId:guid}/deliveries/{deliveryId:guid}/deliver", async (Guid cargoId, Guid deliveryId, DeliverRequest request, CargoService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var cargo = await service.DeliverAsync(tenant.Current!.Id, cargoId, deliveryId, request, cancellationToken);
+        return cargo is null ? Results.NotFound() : Results.Ok(cargo);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+});
+
+app.MapPost("/v1/cargos/{cargoId:guid}/deliveries/{deliveryId:guid}/refuse", async (Guid cargoId, Guid deliveryId, RefuseDeliveryRequest request, CargoService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var cargo = await service.RefuseAsync(tenant.Current!.Id, cargoId, deliveryId, request, cancellationToken);
+        return cargo is null ? Results.NotFound() : Results.Ok(cargo);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+});
+
 #endregion
 
 app.Run();

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhalletRoute.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using WhalletRoute.Infrastructure.Persistence;
 namespace WhalletRoute.Infrastructure.Migrations
 {
     [DbContext(typeof(WhalletRouteDbContext))]
-    partial class WhalletRouteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260721233538_AddFleetColumns")]
+    partial class AddFleetColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
