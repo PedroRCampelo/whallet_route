@@ -66,3 +66,4 @@ frontend/*.tsbuildinfo
 .DS_Store
 
 .claude
+.idea/
