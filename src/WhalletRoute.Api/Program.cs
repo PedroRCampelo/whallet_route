@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using WhalletRoute.Infrastructure.Persistence;
 using WhalletRoute.Application.Cargos;
 using WhalletRoute.Application.Cargos.Contracts;
+using WhalletRoute.Application.Fleet;
+using WhalletRoute.Application.Fleet.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,6 +70,11 @@ builder.Services.AddScoped<ICargoRepository, EfCargoRepository>();
 builder.Services.AddScoped<CargoService>();
 #endregion
 
+#region Driver / Vehicle
+builder.Services.AddScoped<IDriverRepository, EfDriverRepository>();
+builder.Services.AddScoped<IVehicleRepository, EfVehicleRepository>();
+builder.Services.AddScoped<FleetService>();
+#endregion
 
 #endregion
 
@@ -194,6 +201,84 @@ app.MapPost("/v1/cargos/{cargoId:guid}/deliveries/{deliveryId:guid}/refuse", asy
     {
         var cargo = await service.RefuseAsync(tenant.Current!.Id, cargoId, deliveryId, request, cancellationToken);
         return cargo is null ? Results.NotFound() : Results.Ok(cargo);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+});
+
+app.MapPost("/v1/drivers", async (CreateDriverRequest request, FleetService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var driver = await service.CreateDriverAsync(tenant.Current!.Id, request, cancellationToken);
+        return Results.Created($"/v1/drivers/{driver.Id}", driver);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+});
+
+app.MapGet("/v1/drivers", async (FleetService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+    Results.Ok(await service.ListDriversAsync(tenant.Current!.Id, cancellationToken)));
+
+app.MapGet("/v1/drivers/{id:guid}", async (Guid id, FleetService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    var driver = await service.GetDriverAsync(tenant.Current!.Id, id, cancellationToken);
+    return driver is null ? Results.NotFound() : Results.Ok(driver);
+});
+
+app.MapPost("/v1/vehicles", async (CreateVehicleRequest request, FleetService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var vehicle = await service.CreateVehicleAsync(tenant.Current!.Id, request, cancellationToken);
+        return Results.Created($"/v1/vehicles/{vehicle.Id}", vehicle);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+});
+
+app.MapGet("/v1/vehicles", async (FleetService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+    Results.Ok(await service.ListVehiclesAsync(tenant.Current!.Id, cancellationToken)));
+
+app.MapGet("/v1/vehicles/{id:guid}", async (Guid id, FleetService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    var vehicle = await service.GetVehicleAsync(tenant.Current!.Id, id, cancellationToken);
+    return vehicle is null ? Results.NotFound() : Results.Ok(vehicle);
+});
+
+app.MapPost("/v1/cargos/{id:guid}/assign-driver", async (Guid id, AssignDriverRequest request, CargoService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var cargo = await service.AssignDriverAsync(tenant.Current!.Id, id, request.DriverId, cancellationToken);
+        return cargo is null ? Results.NotFound() : Results.Ok(cargo);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
+    }
+});
+
+app.MapPost("/v1/cargos/{id:guid}/assign-vehicle", async (Guid id, AssignVehicleRequest request, CargoService service, ITenantContext tenant, CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var cargo = await service.AssignVehicleAsync(tenant.Current!.Id, id, request.VehicleId, cancellationToken);
+        return cargo is null ? Results.NotFound() : Results.Ok(cargo);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(new { error = ex.Message });
     }
     catch (InvalidOperationException ex)
     {

@@ -54,9 +54,17 @@ public sealed class Cargo
         InvalidateRoute();
     }
 
-    public void AssignDriver(Guid driverId) => DriverId = driverId;
+    public void AssignDriver(Guid driverId)
+    {
+        EnsureEditable();
+        DriverId = driverId;
+    }
 
-    public void AssignVehicle(Guid vehicleId) => VehicleId = vehicleId;
+    public void AssignVehicle(Guid vehicleId)
+    {
+        EnsureEditable();
+        VehicleId = vehicleId;
+    }
 
     public void MarkRouted()
     {

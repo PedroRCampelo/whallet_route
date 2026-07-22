@@ -1,4 +1,5 @@
 using WhalletRoute.Application.Cargos.Contracts;
+using WhalletRoute.Application.Fleet;
 using WhalletRoute.Application.Geocoding;
 using WhalletRoute.Application.Routing;
 using WhalletRoute.Domain.Deliveries;
@@ -10,14 +11,21 @@ namespace WhalletRoute.Application.Cargos;
 public sealed class CargoService
 {
     private readonly ICargoRepository _repository;
+    
     private readonly IGeocoder _geocoder;
     private readonly IRouteSolver _solver;
+    private readonly IDriverRepository _drivers;
+    private readonly IVehicleRepository _vehicles;
 
-    public CargoService(ICargoRepository repository, IGeocoder geocoder, IRouteSolver solver)
+    public CargoService(
+        ICargoRepository repository, IGeocoder geocoder, IRouteSolver solver,
+        IDriverRepository drivers, IVehicleRepository vehicles)
     {
         _repository = repository;
         _geocoder = geocoder;
         _solver = solver;
+        _drivers = drivers;
+        _vehicles = vehicles;
     }
 
     public async Task<CargoResponse> CreateAsync(string tenantId, CreateCargoRequest request, CancellationToken cancellationToken)
@@ -31,10 +39,18 @@ public sealed class CargoService
             cargo.SetOriginCoordinate(new Coordinate(request.OriginLatitude.Value, request.OriginLongitude.Value));
 
         if (request.DriverId is not null)
+        {
+            if (!await _drivers.ExistsAsync(tenantId, request.DriverId.Value, cancellationToken))
+                throw new ArgumentException("Driver not found.");
             cargo.AssignDriver(request.DriverId.Value);
+        }
 
         if (request.VehicleId is not null)
+        {
+            if (!await _vehicles.ExistsAsync(tenantId, request.VehicleId.Value, cancellationToken))
+                throw new ArgumentException("Vehicle not found.");
             cargo.AssignVehicle(request.VehicleId.Value);
+        }
 
         foreach (var item in request.Deliveries)
             cargo.AddDelivery(ToDelivery(item));
@@ -170,6 +186,34 @@ public sealed class CargoService
                 CreatedAt = c.CreatedAt
             })
             .ToList();
+    }
+    
+    public async Task<CargoResponse?> AssignDriverAsync(string tenantId, Guid cargoId, Guid driverId, CancellationToken cancellationToken)
+    {
+        var cargo = await _repository.GetByIdAsync(tenantId, cargoId, cancellationToken);
+        if (cargo is null)
+            return null;
+
+        if (!await _drivers.ExistsAsync(tenantId, driverId, cancellationToken))
+            throw new ArgumentException("Driver not found.");
+
+        cargo.AssignDriver(driverId);
+        await _repository.SaveChangesAsync(cancellationToken);
+        return ToResponse(cargo);
+    }
+
+    public async Task<CargoResponse?> AssignVehicleAsync(string tenantId, Guid cargoId, Guid vehicleId, CancellationToken cancellationToken)
+    {
+        var cargo = await _repository.GetByIdAsync(tenantId, cargoId, cancellationToken);
+        if (cargo is null)
+            return null;
+
+        if (!await _vehicles.ExistsAsync(tenantId, vehicleId, cancellationToken))
+            throw new ArgumentException("Vehicle not found.");
+
+        cargo.AssignVehicle(vehicleId);
+        await _repository.SaveChangesAsync(cancellationToken);
+        return ToResponse(cargo);
     }
 
     private static Delivery ToDelivery(CreateDeliveryRequest request)
