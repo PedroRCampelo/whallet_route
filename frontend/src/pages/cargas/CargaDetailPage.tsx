@@ -6,6 +6,7 @@ import { Badge } from '../../components/portal/Badge';
 import { Button } from '../../components/portal/Button';
 import { Field } from '../../components/portal/Field';
 import { CargoMap } from '../../components/portal/CargoMap';
+import '../../components/portal/PageHeader.css';
 import { CARGO_STATUS, DELIVERY_STATUS, getAvailableActions } from '../../cargoState';
 import type { Cargo, Driver, Vehicle } from '../../types/cargo';
 import './CargaDetailPage.css';
@@ -82,6 +83,7 @@ export function CargaDetailPage() {
         ← Cargas
       </Link>
 
+      <p className="page-header__eyebrow">PORTAL · CARGA</p>
       <div className="cargo-detail__title">
         <h1 className="display mono">{cargo.externalId}</h1>
         <Badge tone={CARGO_STATUS[cargo.status]?.tone ?? 'received'}>

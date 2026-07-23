@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { driversApi, vehiclesApi } from '../api/fleet';
 import { Button } from '../components/portal/Button';
 import { Field } from '../components/portal/Field';
+import { PageHeader } from '../components/portal/PageHeader';
 import type { CreateDriverPayload, CreateVehiclePayload, Driver, Vehicle } from '../types/cargo';
 import './FleetPage.css';
 
@@ -98,7 +99,7 @@ export function FleetPage() {
 
   return (
     <div className="fleet">
-      <h1 className="display">Frota</h1>
+      <PageHeader eyebrow="PORTAL · FROTA" title="Frota" />
 
       <div className="fleet__columns">
         <section className="fleet__column">

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { cargosApi } from '../../api/cargos';
 import { Button } from '../../components/portal/Button';
 import { Field } from '../../components/portal/Field';
+import { PageHeader } from '../../components/portal/PageHeader';
 import type { CreateCargoPayload } from '../../types/cargo';
 import './CargaNewPage.css';
 
@@ -141,7 +142,7 @@ export function CargaNewPage() {
 
   return (
     <div className="cargo-new">
-      <h1 className="display">Nova carga</h1>
+      <PageHeader eyebrow="PORTAL · NOVA CARGA" title="Nova carga" />
 
       <div className="cargo-new__tabs">
         <button

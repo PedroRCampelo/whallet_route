@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import './Nav.css';
 
@@ -15,6 +16,9 @@ export function Nav() {
           <a href="#roteirizar">Roteirizar</a>
           <a href="#como">Como funciona</a>
           <a href="#api">API</a>
+          <Link className="btn btn-ghost" to="/cargas">
+            Portal
+          </Link>
           <a className="btn btn-dark" href="#roteirizar">
             Começar
           </a>

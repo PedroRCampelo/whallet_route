@@ -54,7 +54,7 @@ export function RouteDemoSection({ onCopy }: RouteDemoSectionProps) {
               {loading ? 'Otimizando...' : 'Otimizar rota'}
             </button>
             <p className="demo-static-note no-print">
-              Simulação com dados de exemplo, para você ver como fica — a chamada real chega com o login.
+              Simulação com dados de exemplo.
             </p>
 
             <div className="stats">

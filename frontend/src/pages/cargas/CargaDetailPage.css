@@ -43,9 +43,9 @@
   gap: 24px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 24px;
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-card);
 }
 
 .cargo-detail__actions {
@@ -64,7 +64,10 @@
   flex: 0 0 60%;
   height: 620px;
   position: sticky;
-  top: 24px;
+  top: 92px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
 .delivery-row {

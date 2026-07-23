@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { cargosApi } from '../../api/cargos';
 import { Badge } from '../../components/portal/Badge';
 import { Button } from '../../components/portal/Button';
+import { PageHeader } from '../../components/portal/PageHeader';
 import { CARGO_STATUS } from '../../cargoState';
 import type { CargoSummary, CargoStatus } from '../../types/cargo';
 import './CargasListPage.css';
@@ -30,12 +31,15 @@ export function CargasListPage() {
 
   return (
     <div className="cargas-list">
-      <div className="cargas-list__header">
-        <h1 className="display">Cargas</h1>
-        <Button as={Link} to="/cargas/nova">
-          Nova carga
-        </Button>
-      </div>
+      <PageHeader
+        eyebrow="PORTAL · CARGAS"
+        title="Cargas"
+        action={
+          <Button as={Link} to="/cargas/nova">
+            Nova carga
+          </Button>
+        }
+      />
 
       <div className="cargas-list__filters">
         {STATUS_FILTERS.map((status) => (
