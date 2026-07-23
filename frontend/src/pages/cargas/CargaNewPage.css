@@ -1,0 +1,128 @@
+.cargo-new {
+  max-width: 860px;
+}
+
+.cargo-new h1 {
+  font-size: 26px;
+  margin-bottom: 24px;
+}
+
+.cargo-new__tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.cargo-new__tab {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--line-btn);
+  background: var(--surface);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.cargo-new__tab--active {
+  background: #eeedfb;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.cargo-new__json {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cargo-new__error {
+  color: var(--error-ink);
+  background: var(--error-bg);
+  border: 1px solid var(--error-line);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.cargo-new__form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.cargo-new__origin {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.cargo-new__deliveries {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cargo-new__deliveries-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.delivery-form-row {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.delivery-form-row__main {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr 2fr;
+  gap: 12px;
+}
+
+.delivery-form-row__footer {
+  display: flex;
+  gap: 16px;
+}
+
+.delivery-form-row__toggle,
+.delivery-form-row__remove {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delivery-form-row__toggle {
+  color: var(--primary);
+}
+
+.delivery-form-row__remove {
+  color: var(--error-ink);
+}
+
+.delivery-form-row__extra {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 900px) {
+  .cargo-new__origin,
+  .delivery-form-row__main,
+  .delivery-form-row__extra {
+    grid-template-columns: 1fr;
+  }
+}

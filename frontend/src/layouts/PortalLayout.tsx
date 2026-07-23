@@ -13,8 +13,11 @@ export function PortalLayout() {
           </span>
         </div>
         <nav className="portal-nav">
-          <NavLink to="/cargas" end className={({ isActive }) => (isActive ? 'is-active' : '')}>
+          <NavLink to="/cargas" className={({ isActive }) => (isActive ? 'is-active' : '')}>
             Cargas
+          </NavLink>
+          <NavLink to="/frota" className={({ isActive }) => (isActive ? 'is-active' : '')}>
+            Frota
           </NavLink>
         </nav>
       </header>

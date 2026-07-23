@@ -1,36 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { RouteMap, type RouteMapHandle } from './RouteMap';
 import { useRouteOptimizer } from './useRouteOptimizer';
 import { km, leg, mins } from './map-utils';
+import { DEFAULT_REQUEST_JSON } from './sample-data';
 import type { MapPoint } from './types';
-import type { RouteRequest, RoutePointInput } from '../../types/route';
 import './RouteDemo.css';
-
-function parseOriginId(jsonText: string): string {
-  try {
-    const parsed = JSON.parse(jsonText) as RouteRequest;
-    return parsed.origin?.id || 'DC';
-  } catch {
-    return 'DC';
-  }
-}
-
-/** Fallback coordinates taken from the request itself, used when the API response omits lat/lng. */
-function inputCoords(jsonText: string): Record<string, { lat: number; lng: number }> {
-  const out: Record<string, { lat: number; lng: number }> = {};
-  try {
-    const parsed = JSON.parse(jsonText) as RouteRequest;
-    const points: RoutePointInput[] = [parsed.origin, ...(parsed.stops || [])];
-    points.forEach((p) => {
-      if (p && p.latitude != null && p.longitude != null) {
-        out[p.id] = { lat: p.latitude, lng: p.longitude };
-      }
-    });
-  } catch {
-    // invalid JSON while typing — no fallback coords available yet
-  }
-  return out;
-}
 
 interface RouteDemoSectionProps {
   onCopy: (text: string, message: string) => void;
@@ -38,37 +12,23 @@ interface RouteDemoSectionProps {
 
 export function RouteDemoSection({ onCopy }: RouteDemoSectionProps) {
   const mapRef = useRef<RouteMapHandle>(null);
-  const { apiUrl, setApiUrl, jsonText, setJsonText, loading, error, response, optimize } = useRouteOptimizer();
+  const { loading, response, optimize } = useRouteOptimizer();
   const [mapHasRoute, setMapHasRoute] = useState(false);
 
   useEffect(() => {
     if (!response) return;
-    const fallback = inputCoords(jsonText);
-    const coordOf = (p: { id: string; latitude?: number; longitude?: number }) =>
-      p.latitude != null && p.longitude != null ? { lat: p.latitude, lng: p.longitude } : fallback[p.id];
 
-    const originCoord = coordOf(response.origin);
-    const origin: MapPoint | null = originCoord ? { id: response.origin.id, ...originCoord, isOrigin: true } : null;
-    const stops: MapPoint[] = response.stops
-      .map((s): MapPoint | null => {
-        const coord = coordOf(s);
-        return coord ? { id: s.id, order: s.order, ...coord } : null;
-      })
-      .filter((p): p is MapPoint => p !== null);
-
-    const points = origin ? [origin, ...stops] : stops;
-    if (points.length === 0) return;
+    const origin: MapPoint = { id: response.origin.id, lat: response.origin.latitude, lng: response.origin.longitude, isOrigin: true };
+    const stops: MapPoint[] = response.stops.map((s) => ({ id: s.id, order: s.order, lat: s.latitude, lng: s.longitude }));
 
     setMapHasRoute(true);
-    void mapRef.current?.renderRoute(points);
-    // fallback coords depend on jsonText at the time of the response, not on later edits
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    void mapRef.current?.renderRoute([origin, ...stops]);
   }, [response]);
 
-  const originId = useMemo(() => (response ? response.origin.id : parseOriginId(jsonText)), [response, jsonText]);
+  const originId = response ? response.origin.id : 'DC';
 
   function handleCopyJson() {
-    const payload = response ? JSON.stringify(response, null, 2) : jsonText;
+    const payload = response ? JSON.stringify(response, null, 2) : DEFAULT_REQUEST_JSON;
     onCopy(payload, 'JSON copiado');
   }
 
@@ -79,26 +39,23 @@ export function RouteDemoSection({ onCopy }: RouteDemoSectionProps) {
           <span className="sec-num">01</span>
           <div>
             <p className="eyebrow">WAYPOINT 01 · ROTEIRIZAR</p>
-            <h2>Cole o JSON. Veja a rota.</h2>
-            <p>Sua requisição vira um mapa interativo e uma sequência de entrega otimizada — pronta para relatório.</p>
+            <h2>Veja como fica a rota otimizada.</h2>
+            <p>A requisição vira um mapa interativo e uma sequência de entrega otimizada — pronta para relatório.</p>
           </div>
         </div>
 
         <div className="demo-card">
           <div className="demo-panel">
             <div className="no-print">
-              <p className="field-label">ENDPOINT</p>
-              <input className="input" value={apiUrl} spellCheck={false} onChange={(e) => setApiUrl(e.target.value)} />
-            </div>
-            <div className="no-print">
-              <p className="field-label">REQUISIÇÃO</p>
-              <textarea className="editor" spellCheck={false} value={jsonText} onChange={(e) => setJsonText(e.target.value)} />
+              <p className="field-label">REQUISIÇÃO · EXEMPLO</p>
+              <textarea className="editor editor--readonly" spellCheck={false} readOnly value={DEFAULT_REQUEST_JSON} />
             </div>
             <button className="btn btn-primary demo-run no-print" disabled={loading} onClick={() => void optimize()}>
               {loading ? 'Otimizando...' : 'Otimizar rota'}
             </button>
-
-            {error && <div className="note note--error is-on no-print">{error}</div>}
+            <p className="demo-static-note no-print">
+              Simulação com dados de exemplo, para você ver como fica — a chamada real chega com o login.
+            </p>
 
             <div className="stats">
               <div className="stat">

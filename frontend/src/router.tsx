@@ -3,7 +3,9 @@ import { MarketingLayout } from './layouts/MarketingLayout';
 import { PortalLayout } from './layouts/PortalLayout';
 import { LandingPage } from './pages/LandingPage';
 import { CargasListPage } from './pages/cargas/CargasListPage';
+import { CargaNewPage } from './pages/cargas/CargaNewPage';
 import { CargaDetailPage } from './pages/cargas/CargaDetailPage';
+import { FleetPage } from './pages/FleetPage';
 
 export const router = createBrowserRouter([
   {
@@ -11,11 +13,12 @@ export const router = createBrowserRouter([
     children: [{ index: true, element: <LandingPage /> }],
   },
   {
-    path: 'cargas',
     element: <PortalLayout />,
     children: [
-      { index: true, element: <CargasListPage /> },
-      { path: ':id', element: <CargaDetailPage /> },
+      { path: 'cargas', element: <CargasListPage /> },
+      { path: 'cargas/nova', element: <CargaNewPage /> },
+      { path: 'cargas/:id', element: <CargaDetailPage /> },
+      { path: 'frota', element: <FleetPage /> },
     ],
   },
 ]);

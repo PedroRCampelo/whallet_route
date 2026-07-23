@@ -1,0 +1,20 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.badge--received { color: var(--status-received); background: var(--status-received-bg); }
+.badge--routed { color: var(--status-routed); background: var(--status-routed-bg); }
+.badge--dispatched { color: var(--status-dispatched); background: var(--status-dispatched-bg); }
+.badge--completed { color: var(--status-completed); background: var(--status-completed-bg); }
+
+.badge--pending { color: var(--delivery-pending); background: var(--delivery-pending-bg); }
+.badge--enroute { color: var(--delivery-enroute); background: var(--delivery-enroute-bg); }
+.badge--delivered { color: var(--delivery-delivered); background: var(--delivery-delivered-bg); }
+.badge--refused { color: var(--delivery-refused); background: var(--delivery-refused-bg); }

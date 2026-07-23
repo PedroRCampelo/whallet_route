@@ -23,3 +23,6 @@ export const SAMPLE_RESPONSE: RouteResponse = {
     { id: 'C0001-01', order: 5, latitude: -8.1131332, longitude: -34.89312779999999, legDistanceMeters: 5943, legDurationSeconds: 713 },
   ],
 };
+
+// exibida somente como exemplo, somente-leitura — não é enviada a lugar nenhum
+export const DEFAULT_REQUEST_JSON = JSON.stringify(DEFAULT_REQUEST, null, 2);

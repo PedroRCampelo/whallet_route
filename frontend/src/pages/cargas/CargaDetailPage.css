@@ -1,0 +1,139 @@
+.cargo-detail__back {
+  display: inline-block;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.cargo-detail__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.cargo-detail__title h1 {
+  font-size: 28px;
+}
+
+.cargo-detail__hint {
+  color: var(--muted);
+}
+
+.cargo-detail__error {
+  color: var(--error-ink);
+  background: var(--error-bg);
+  border: 1px solid var(--error-line);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.cargo-detail__body {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.cargo-detail__panel {
+  flex: 0 0 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-soft);
+}
+
+.cargo-detail__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cargo-detail__deliveries {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cargo-detail__map {
+  flex: 0 0 60%;
+  height: 620px;
+  position: sticky;
+  top: 24px;
+}
+
+.delivery-row {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.delivery-row__main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.delivery-row__order {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #eeedfb;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.delivery-row__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.delivery-row__address {
+  color: var(--muted);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.delivery-row__buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.delivery-row__refuse {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .cargo-detail__body {
+    flex-direction: column;
+  }
+  .cargo-detail__panel,
+  .cargo-detail__map {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+  .cargo-detail__map {
+    height: 420px;
+    position: static;
+  }
+}

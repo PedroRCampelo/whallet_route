@@ -1,0 +1,89 @@
+.fleet h1 {
+  font-size: 26px;
+  margin-bottom: 24px;
+}
+
+.fleet__hint {
+  color: var(--muted);
+}
+
+.fleet__error {
+  color: var(--error-ink);
+  background: var(--error-bg);
+  border: 1px solid var(--error-line);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.fleet__columns {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.fleet__column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fleet__column h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.fleet__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+
+.fleet__list-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.fleet__list-item:last-child {
+  border-bottom: none;
+}
+
+.fleet__list-meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.fleet__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.fleet__form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .fleet__columns {
+    flex-direction: column;
+  }
+  .fleet__column {
+    width: 100%;
+  }
+}
